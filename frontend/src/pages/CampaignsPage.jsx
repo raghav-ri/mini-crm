@@ -91,22 +91,44 @@ function CampaignsPage() {
   };
 
   const sendCampaign = async (
-    campaignId
-  ) => {
-    try {
+  campaignId
+) => {
+  try {
+    const response =
       await api.post(
         `/campaigns/${campaignId}/send`
       );
 
-      alert(
-        "Campaign Sent Successfully"
-      );
+    console.log(
+      "SEND RESPONSE:",
+      response.data
+    );
 
-      fetchCampaigns();
-    } catch (error) {
-      console.log(error);
-    }
-  };
+    alert(
+      `Campaign Sent Successfully
+
+Audience Size: ${
+        response.data.data
+          ?.audienceSize || 0
+      }
+
+Recipients Created: ${
+        response.data.data
+          ?.recipientsCreated || 0
+      }`
+    );
+
+    fetchCampaigns();
+  } catch (error) {
+    console.error(error);
+
+    alert(
+      error.response?.data
+        ?.message ||
+        error.message
+    );
+  }
+};
 
   useEffect(() => {
     fetchCampaigns();
