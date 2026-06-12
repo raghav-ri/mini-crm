@@ -17,6 +17,11 @@ function SegmentsPage() {
   const [aiRules, setAiRules] =
     useState(null);
 
+  const [
+    aiSuggestion,
+    setAiSuggestion,
+  ] = useState(null);
+
   const fetchSegments =
     async () => {
       try {
@@ -59,6 +64,9 @@ function SegmentsPage() {
 
         setPrompt("");
         setAiRules(null);
+        setAiSuggestion(
+          null
+        );
 
         fetchSegments();
 
@@ -98,9 +106,59 @@ function SegmentsPage() {
 
         setAiRules(parsed);
 
+        let suggestedName =
+          "Smart Audience";
+
+        if (
+          prompt
+            .toLowerCase()
+            .includes("punjab")
+        ) {
+          suggestedName =
+            "Punjab Customers";
+        }
+
+        if (
+          prompt
+            .toLowerCase()
+            .includes(
+              "less than"
+            ) ||
+          prompt
+            .toLowerCase()
+            .includes(
+              "below"
+            )
+        ) {
+          suggestedName =
+            "Budget Customers";
+        }
+
+        if (
+          prompt
+            .toLowerCase()
+            .includes(
+              "greater"
+            ) ||
+          prompt
+            .toLowerCase()
+            .includes(
+              "more than"
+            )
+        ) {
+          suggestedName =
+            "High Value Customers";
+        }
+
+        setAiSuggestion({
+          name: suggestedName,
+          description:
+            prompt,
+        });
+
         setForm({
           name:
-            "AI Generated Segment",
+            suggestedName,
           description:
             prompt,
           minSpend:
@@ -125,15 +183,15 @@ function SegmentsPage() {
         Segments
       </h1>
 
-      {/* AI Segment Generator */}
+      {/* AI Generator */}
 
       <div className="bg-white p-6 rounded-lg shadow mb-6">
-        <h2 className="font-bold text-lg mb-4">
+        <h2 className="text-xl font-bold mb-4">
           AI Segment Generator
         </h2>
 
         <input
-          placeholder="Describe audience..."
+          placeholder="Describe your audience..."
           value={prompt}
           onChange={(e) =>
             setPrompt(
@@ -152,19 +210,34 @@ function SegmentsPage() {
           Generate Segment
         </button>
 
-        {aiRules && (
-          <div className="mt-4 p-4 bg-gray-100 rounded">
-            <h3 className="font-semibold mb-2">
-              AI Generated Rules
+        {aiSuggestion && (
+          <div className="mt-5 border rounded-lg p-5 bg-indigo-50">
+            <h3 className="font-bold text-lg">
+              Suggested Segment
             </h3>
 
-            <pre className="text-sm overflow-x-auto">
-              {JSON.stringify(
-                aiRules,
-                null,
-                2
-              )}
-            </pre>
+            <p className="mt-2">
+              <span className="font-semibold">
+                Name:
+              </span>{" "}
+              {
+                aiSuggestion.name
+              }
+            </p>
+
+            <p className="mt-1 text-gray-700">
+              {
+                aiSuggestion.description
+              }
+            </p>
+
+            <p className="mt-3 text-sm text-green-700">
+              Segment details
+              have been prepared.
+              You can edit the
+              form below and save
+              it.
+            </p>
           </div>
         )}
       </div>
@@ -232,15 +305,16 @@ function SegmentsPage() {
 
       {/* Segment List */}
 
-      <div className="bg-white rounded-lg shadow p-4">
-        <h2 className="text-xl font-bold mb-4">
+      <div className="bg-white rounded-lg shadow p-6">
+        <h2 className="text-2xl font-bold mb-4">
           Existing Segments
         </h2>
 
         {segments.length ===
         0 ? (
           <p>
-            No segments found.
+            No segments
+            available.
           </p>
         ) : (
           segments.map(
@@ -249,29 +323,17 @@ function SegmentsPage() {
                 key={segment.id}
                 className="border-b py-4"
               >
-                <h2 className="font-bold text-lg">
+                <h3 className="font-bold text-lg">
                   {
                     segment.name
                   }
-                </h2>
+                </h3>
 
-                <p className="text-gray-700">
+                <p className="text-gray-600 mt-1">
                   {
                     segment.description
                   }
                 </p>
-
-                <p className="text-sm text-gray-500 mt-2">
-                  Rules:
-                </p>
-
-                <pre className="bg-gray-100 p-2 rounded text-xs overflow-x-auto mt-1">
-                  {JSON.stringify(
-                    segment.rules,
-                    null,
-                    2
-                  )}
-                </pre>
               </div>
             )
           )
