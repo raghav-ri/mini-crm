@@ -17,10 +17,6 @@ function CampaignsPage() {
   const [generatedMessage, setGeneratedMessage] =
     useState("");
   
-  console.log(
-  "API URL:",
-  import.meta.env.VITE_API_URL
-);
 
   const fetchCampaigns = async () => {
     try {
